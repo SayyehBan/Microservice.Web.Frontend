@@ -1,8 +1,14 @@
+using Microservice.Web.Frontend.Services.ProductServices;
+using RestSharp;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped<IProductService>(p =>
+{
+    return new RProductService(new RestClient(builder.Configuration["MicroservicAddress:Product:uri"]));
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
