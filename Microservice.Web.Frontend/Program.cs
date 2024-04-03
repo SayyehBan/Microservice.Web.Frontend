@@ -1,13 +1,18 @@
+using Microservice.Web.Frontend.Services.BasketServices;
 using Microservice.Web.Frontend.Services.ProductServices;
 using RestSharp;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); ;
 builder.Services.AddScoped<IProductService>(p =>
 {
     return new RProductService(new RestClient(builder.Configuration["MicroservicAddress:Product:uri"]));
+});
+builder.Services.AddScoped<IBasketService>(p =>
+{
+    return new RBasketService(new RestClient(builder.Configuration["MicroservicAddress:Basket:Uri"]));
 });
 var app = builder.Build();
 
