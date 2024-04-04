@@ -6,9 +6,6 @@
 
 <h1>محصولات</h1>
 
-<p>
-    <a asp-action="Create">محصول جدید</a>
-</p>
 <table class="table table-hover table-bordered table-responsive">
     <thead>
         <tr>
@@ -17,9 +14,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.image)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.price)
@@ -38,13 +32,16 @@
                     @Html.DisplayFor(modelItem => item.name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.image)
+                    @item.price.ToString("n0") تومان
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.price)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.id">جزئیات محصولات</a>
+                    <a asp-action="Details"
+                       asp-controller="Product"
+                       asp-route-id="@item.id">
+                        جزئیات
+                    </a>
+                    <a asp-action="AddToBasket" asp-controller="Basket" asp-route-ProductId="@item.id" class="btn btn-success"> افزودن به سبد </a>
+
                 </td>
             </tr>
         }

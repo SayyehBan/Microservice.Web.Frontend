@@ -13,6 +13,6 @@ public class ProductDto
     [Display(Name = "تصویر")]
     public string image { get; set; }
     [Display(Name = "قیمت")]
-    public int? price { get; set; }
+    public int price { get; set; }
     public ProductCategory productCategory { get; set; }
 }

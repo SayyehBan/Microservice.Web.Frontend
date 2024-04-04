@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SayyehBanTools.Calc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Web.Frontend.Services.BasketServices;
 
@@ -16,4 +17,8 @@ public class BasketItem
     public int quantity { get; set; }
     [Display(Name = "تصویر")]
     public string imageUrl { get; set; }
+    public int TotalPrice()
+    {
+        return Convert.ToInt32(Calculator.Multiply(unitPrice, quantity));
+    }
 }
