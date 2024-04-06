@@ -12,6 +12,7 @@ public interface IBasketService
     ResultDto AddToBasket(AddToBasketDto addToBasket, string UserId);
     ResultDto DeleteFromBasket(Guid Id);
     ResultDto UpdateQuantity(Guid BasketItemId, int quantity);
+    ResultDto ApplyDiscountToBasket(Guid basketId, Guid discountId);
 }
 public class RBasketService : IBasketService
 {
@@ -31,8 +32,12 @@ public class RBasketService : IBasketService
         return ResultAPI.GetResponseStatusCode(response);
     }
 
-
-
+    public ResultDto ApplyDiscountToBasket(Guid basketId, Guid discountId)
+    {
+        var request = new RestRequest($"api/Basket/{basketId}/{discountId}",Method.Put);
+        var response= restClient.Execute(request);
+        return ResultAPI.GetResponseStatusCode(response);
+    }
 
     public ResultDto DeleteFromBasket(Guid Id)
     {

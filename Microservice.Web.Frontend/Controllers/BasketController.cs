@@ -1,4 +1,6 @@
-﻿using Microservice.Web.Frontend.Services.BasketServices;
+﻿using Microservice.Web.Frontend.Models.Dtos;
+using Microservice.Web.Frontend.Services.BasketServices;
+using Microservice.Web.Frontend.Services.DiscountServices;
 using Microservice.Web.Frontend.Services.ProductServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,15 +10,30 @@ public class BasketController : Controller
 {
     private readonly IBasketService basketService;
     private readonly IProductService productService;
+    private readonly IDiscountService discountService;
     private readonly string UserId = "1";
-    public BasketController(IBasketService basketService, IProductService productService)
+    public BasketController(IBasketService basketService,
+        IProductService productService,
+        IDiscountService discountService)
     {
         this.basketService = basketService;
         this.productService = productService;
+        this.discountService = discountService;
     }
     public IActionResult Index()
     {
         var basket = basketService.GetBasket(UserId);
+
+        if (basket.discountId.HasValue)
+        {
+            var discount = discountService.GetDiscountById(basket.discountId.Value);
+            basket.DiscountDetail = new DiscountInBasketDto
+            {
+                Amount = discount.Data.Amount,
+                DiscountCode = discount.Data.Code,
+            };
+        }
+
         return View(basket);
     }
 
@@ -49,5 +66,50 @@ public class BasketController : Controller
         basketService.UpdateQuantity(BasketItemId, quantity);
         return RedirectToAction("Index");
 
+    }
+
+
+
+
+    [HttpPost]
+    public IActionResult ApplyDiscount(string DiscountCode)
+    {
+        if (string.IsNullOrWhiteSpace(DiscountCode))
+        {
+            return Json(new ResultDto
+            {
+                IsSuccess = false,
+                Message = "لطفا کد تخفیف را وارد نمایید"
+            });
+        }
+        var discount = discountService.GetDiscountByCode(DiscountCode);
+        if (discount.IsSuccess == true)
+        {
+            if (discount.Data.Used)
+            {
+                return Json(new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = "این کد تخفیف قبلا استفاده شده است"
+                });
+            }
+
+            var basket = basketService.GetBasket(UserId);
+            basketService.ApplyDiscountToBasket(Guid.Parse(basket.id), discount.Data.Id);
+            discountService.UseDiscount(discount.Data.Id);
+            return Json(new ResultDto
+            {
+                IsSuccess = true,
+                Message = "کد تخفیف با موفقیت به سبد خرید شما اعمال شد",
+            });
+        }
+        else
+        {
+            return Json(new ResultDto
+            {
+                IsSuccess = false,
+                Message = discount.Message,
+            });
+        }
     }
 }
