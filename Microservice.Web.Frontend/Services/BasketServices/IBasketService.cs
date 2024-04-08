@@ -12,7 +12,7 @@ public interface IBasketService
     ResultDto AddToBasket(AddToBasketDto addToBasket, string UserId);
     ResultDto DeleteFromBasket(Guid Id);
     ResultDto UpdateQuantity(Guid BasketItemId, int quantity);
-    ResultDto ApplyDiscountToBasket(Guid basketId, Guid discountId);
+    ResultDto ApplyDiscountToBasket(Guid basketId, Guid discountId); ResultDto Checkout(CheckoutDto checkout);
 }
 public class RBasketService : IBasketService
 {
@@ -37,6 +37,17 @@ public class RBasketService : IBasketService
         var request = new RestRequest($"api/Basket/{basketId}/{discountId}",Method.Put);
         var response= restClient.Execute(request);
         return ResultAPI.GetResponseStatusCode(response);
+    }
+
+    public ResultDto Checkout(CheckoutDto checkout)
+    {
+        var request = new RestRequest($"api/Basket/CheckoutBasket", Method.Post);
+        request.AddHeader("Content-Type", "application/json");
+        string serializeModel = JsonSerializer.Serialize(checkout);
+        request.AddParameter("application/json", serializeModel, ParameterType.RequestBody);
+        var response = restClient.Execute(request);
+        return ResultAPI.GetResponseStatusCode(response);
+
     }
 
     public ResultDto DeleteFromBasket(Guid Id)
