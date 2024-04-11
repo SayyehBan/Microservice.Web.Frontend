@@ -1,5 +1,6 @@
 using Microservice.Web.Frontend.Services.BasketServices;
 using Microservice.Web.Frontend.Services.DiscountServices;
+using Microservice.Web.Frontend.Services.OrderServices;
 using Microservice.Web.Frontend.Services.ProductServices;
 using RestSharp;
 
@@ -18,6 +19,12 @@ builder.Services.AddScoped<IProductService>(p =>
 builder.Services.AddScoped<IBasketService>(p =>
 {
     return new RBasketService(new RestClient(builder.Configuration["MicroservicAddress:Basket:Uri"]));
+});
+
+builder.Services.AddScoped<IOrderService>(p =>
+{
+    return new ROrderService(
+        new RestClient(builder.Configuration["MicroservicAddress:Order:Uri"]));
 });
 builder.Services.AddScoped<IDiscountService, RDiscountService>();
 var app = builder.Build();
