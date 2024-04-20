@@ -28,29 +28,32 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.items)
+        @if (Model != null)
         {
-            <tr>
+            @foreach (var item in Model.items)
+            {
+                <tr>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.productName)
-                </td>
-                <td>
-                    <b class="text-success">@item.unitPrice.ToString("n0")  تومان</b>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.quantity)
-                </td>
-                <td>
-                    <b class="text-success">@item.TotalPrice().ToString("n0")  تومان</b>
-                </td>
-                <td class="row">
-                    <a class="btn btn-danger" asp-action="Delete" asp-controller="Basket" asp-route-id="@item.id"> حذف</a>
-                    <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editQuantityModal" onclick="ShowEdit('@item.id', @item.quantity)">ویرایش تعداد</a>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.productName)
+                    </td>
+                    <td>
+                        <b class="text-success">@item.unitPrice.ToString("n0")  تومان</b>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.quantity)
+                    </td>
+                    <td>
+                        <b class="text-success">@item.TotalPrice().ToString("n0")  تومان</b>
+                    </td>
+                    <td class="row">
+                        <a class="btn btn-danger" asp-action="Delete" asp-controller="Basket" asp-route-id="@item.id"> حذف</a>
+                        <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editQuantityModal" onclick="ShowEdit('@item.id', @item.quantity)">ویرایش تعداد</a>
 
 
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
     <tfoot>
@@ -64,7 +67,10 @@
             <td>
             </td>
             <td>
-                <b>@Model.TotalPrice().ToString("n0")  تومان</b>
+                @if (Model != null)
+                {
+                    <b>@Model.TotalPrice().ToString("n0")  تومان</b>
+                }
             </td>
             <td>
             </td>

@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Microservice.Web.Frontend.Models.LinkService;
+using RestSharp;
 using System.Text.Json;
 
 namespace Microservice.Web.Frontend.Services.ProductServices;
@@ -15,8 +16,12 @@ public class RProductService : IProductService
     {
         var request = new RestRequest("api/Product", Method.Get);
         var response = restClient.Execute(request);
-        var product = JsonSerializer.Deserialize<List<ProductDto>>(response.Content);
-        return product;
+        if (response.Content != null)
+        {
+            var product = JsonSerializer.Deserialize<List<ProductDto>>(response.Content);
+            return product;
+        }
+        return null;
     }
 
     public ProductDto GetProduct(Guid Id)

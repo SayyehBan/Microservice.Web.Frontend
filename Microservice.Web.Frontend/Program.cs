@@ -1,31 +1,40 @@
+﻿using Microservice.Web.Frontend.Models.LinkService;
 using Microservice.Web.Frontend.Services.BasketServices;
 using Microservice.Web.Frontend.Services.DiscountServices;
 using Microservice.Web.Frontend.Services.OrderServices;
 using Microservice.Web.Frontend.Services.ProductServices;
 using RestSharp;
+using System.Net;
+using System.Net.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var mvcService = builder.Services.AddControllersWithViews();
+
+
 if (builder.Environment.IsDevelopment())
 {
     mvcService.AddRazorRuntimeCompilation();
 }
 builder.Services.AddScoped<IProductService>(p =>
 {
-    return new RProductService(new RestClient(builder.Configuration["MicroservicAddress:Product:uri"]));
+    return new RProductService(new RestClient(LinkServices.ProductService));
 });
 builder.Services.AddScoped<IBasketService>(p =>
 {
-    return new RBasketService(new RestClient(builder.Configuration["MicroservicAddress:Basket:Uri"]));
+    return new RBasketService(new RestClient(LinkServices.BasketService));
 });
 
 builder.Services.AddScoped<IOrderService>(p =>
 {
     return new ROrderService(
-        new RestClient(builder.Configuration["MicroservicAddress:Order:Uri"]));
-});
+        new RestClient(LinkServices.OrderService));
+}); 
+ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+// اضافه کردن کد زیر به قسمت ابتدایی کد شما
+ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 builder.Services.AddScoped<IDiscountService, RDiscountService>();
 var app = builder.Build();
 

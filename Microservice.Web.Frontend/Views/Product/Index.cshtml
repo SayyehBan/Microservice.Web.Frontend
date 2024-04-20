@@ -22,28 +22,31 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model != null)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.name)
-                </td>
-                <td>
-                    @item.price.ToString("n0") تومان
-                </td>
-                <td>
-                    <a asp-action="Details"
-                       asp-controller="Product"
-                       asp-route-id="@item.id">
-                        جزئیات
-                    </a>
-                    <a asp-action="AddToBasket" asp-controller="Basket" asp-route-ProductId="@item.id" class="btn btn-success"> افزودن به سبد </a>
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.name)
+                    </td>
+                    <td>
+                        @item.price.ToString("n0") تومان
+                    </td>
+                    <td>
+                        <a asp-action="Details"
+                           asp-controller="Product"
+                           asp-route-id="@item.id">
+                            جزئیات
+                        </a>
+                        <a asp-action="AddToBasket" asp-controller="Basket" asp-route-ProductId="@item.id" class="btn btn-success"> افزودن به سبد </a>
 
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>

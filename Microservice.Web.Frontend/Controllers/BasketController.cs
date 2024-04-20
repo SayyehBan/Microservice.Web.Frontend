@@ -23,15 +23,17 @@ public class BasketController : Controller
     public IActionResult Index()
     {
         var basket = basketService.GetBasket(UserId);
-
-        if (basket.discountId.HasValue)
+        if (basket != null)
         {
-            var discount = discountService.GetDiscountById(basket.discountId.Value);
-            basket.DiscountDetail = new DiscountInBasketDto
+            if (basket.discountId.HasValue)
             {
-                Amount = discount.Data.Amount,
-                DiscountCode = discount.Data.Code,
-            };
+                var discount = discountService.GetDiscountById(basket.discountId.Value);
+                basket.DiscountDetail = new DiscountInBasketDto
+                {
+                    Amount = discount.Data.Amount,
+                    DiscountCode = discount.Data.Code,
+                };
+            }
         }
 
         return View(basket);

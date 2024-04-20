@@ -1,6 +1,7 @@
 ﻿using DiscountService.Proto;
 using Grpc.Net.Client;
 using Microservice.Web.Frontend.Models.Dtos;
+using Microservice.Web.Frontend.Models.LinkService;
 
 namespace Microservice.Web.Frontend.Services.DiscountServices;
 
@@ -13,7 +14,7 @@ public class RDiscountService : IDiscountService
     public RDiscountService(IConfiguration configuration)
     {
         this.configuration = configuration;
-        string discountServer = configuration["MicroservicAddress:Discount:Uri"];
+        string discountServer = LinkServices.DiscountService;
 
         channel = GrpcChannel.ForAddress(discountServer);
     }

@@ -3,6 +3,8 @@ using RestSharp;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using Microservice.Web.Frontend.Helper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microservice.Web.Frontend.Models.LinkService;
 
 namespace Microservice.Web.Frontend.Services.BasketServices;
 
@@ -61,8 +63,12 @@ public class RBasketService : IBasketService
     {
         var request = new RestRequest($"api/Basket?UserId={UserId}", Method.Get);
         var response = restClient.Execute(request);
-        var basket = JsonSerializer.Deserialize<BasketDto>(response.Content);
-        return basket;
+        if (response.Content != null)
+        {
+            var basket = JsonSerializer.Deserialize<BasketDto>(response.Content);
+            return basket;
+        }
+        return null;
     }
 
     public ResultDto UpdateQuantity(Guid BasketItemId, int quantity)
