@@ -2,10 +2,10 @@
 using Microservice.Web.Frontend.Services.BasketServices;
 using Microservice.Web.Frontend.Services.DiscountServices;
 using Microservice.Web.Frontend.Services.OrderServices;
+using Microservice.Web.Frontend.Services.PaymentServices;
 using Microservice.Web.Frontend.Services.ProductServices;
 using RestSharp;
 using System.Net;
-using System.Net.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +30,12 @@ builder.Services.AddScoped<IOrderService>(p =>
 {
     return new ROrderService(
         new RestClient(LinkServices.OrderService));
+}); 
+
+builder.Services.AddScoped<IPaymentService>(p =>
+{
+    return new RPaymentService(
+        new RestClient(LinkServices.PaymentService));
 }); 
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 

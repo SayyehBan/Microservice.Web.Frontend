@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microservice.Web.Frontend.Models.Dtos;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace Microservice.Web.Frontend.Services.OrderServices;
@@ -6,6 +7,7 @@ public interface IOrderService
 {
     List<OrderDto> GetOrders(string UserId);
     OrderDetailDto OrderDetail(Guid OrderId);
+    ResultDto RequestPayment(Guid OrderId);
 }
 
 public class ROrderService : IOrderService
@@ -31,5 +33,32 @@ public class ROrderService : IOrderService
         var response = restClient.Execute(request);
         var orderdetail = JsonConvert.DeserializeObject<OrderDetailDto>(response.Content);
         return orderdetail;
+    }
+
+    public ResultDto RequestPayment(Guid OrderId)
+    {
+        var request = new RestRequest($"/api/OrderPayment?OrderId={OrderId}", Method.Post);
+        request.AddHeader("Content-Type", "application/json");
+        var response = restClient.Execute(request);
+        return GetResponseStatusCode(response);
+    }
+
+    private static ResultDto GetResponseStatusCode(RestResponse response)
+    {
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return new ResultDto
+            {
+                IsSuccess = true,
+            };
+        }
+        else
+        {
+            return new ResultDto
+            {
+                IsSuccess = false,
+                Message = response.ErrorMessage
+            };
+        }
     }
 }

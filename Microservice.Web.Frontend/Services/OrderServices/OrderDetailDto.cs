@@ -11,6 +11,7 @@ public class OrderDetailDto
     public string Address { get; set; }
     public string PhoneNumber { get; set; }
     public int TotalPrice { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
     public List<OrderLineDto> OrderLines { get; set; }
 
 }
