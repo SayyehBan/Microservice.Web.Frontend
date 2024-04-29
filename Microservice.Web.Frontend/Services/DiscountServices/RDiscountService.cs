@@ -1,7 +1,7 @@
 ﻿using DiscountService.Proto;
 using Grpc.Net.Client;
 using Microservice.Web.Frontend.Models.Dtos;
-using Microservice.Web.Frontend.Models.LinkService;
+using Microservice.Web.Frontend.Models.Links;
 
 namespace Microservice.Web.Frontend.Services.DiscountServices;
 

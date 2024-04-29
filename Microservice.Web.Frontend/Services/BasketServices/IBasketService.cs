@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using Microservice.Web.Frontend.Helper;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microservice.Web.Frontend.Models.LinkService;
+using Microservice.Web.Frontend.Models.Links;
 
 namespace Microservice.Web.Frontend.Services.BasketServices;
 

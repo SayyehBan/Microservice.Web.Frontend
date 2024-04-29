@@ -1,4 +1,4 @@
-﻿using Microservice.Web.Frontend.Models.LinkService;
+﻿using Microservice.Web.Frontend.Models.Links;
 using Microservice.Web.Frontend.Services.BasketServices;
 using Microservice.Web.Frontend.Services.DiscountServices;
 using Microservice.Web.Frontend.Services.OrderServices;

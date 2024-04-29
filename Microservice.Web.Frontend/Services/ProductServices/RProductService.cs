@@ -1,4 +1,4 @@
-﻿using Microservice.Web.Frontend.Models.LinkService;
+﻿using Microservice.Web.Frontend.Models.Links;
 using RestSharp;
 using System.Text.Json;
 
