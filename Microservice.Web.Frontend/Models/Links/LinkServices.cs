@@ -7,4 +7,5 @@ public static class LinkServices
     public static string OrderService = "https://localhost:44376/";
     public static string ProductService = "https://localhost:44304/";
     public static string PaymentService = "https://localhost:44390/";
+    public static string ApiGatewayForWeb= "https://localhost:7049/";
 }

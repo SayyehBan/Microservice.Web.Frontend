@@ -41,7 +41,11 @@ ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProt
 
 // اضافه کردن کد زیر به قسمت ابتدایی کد شما
 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-builder.Services.AddScoped<IDiscountService, RDiscountService>();
+//builder.Services.AddScoped<IDiscountService, RDiscountService>();
+builder.Services.AddScoped<IDiscountService>(p =>
+{
+    return new DiscountServiceRestful(new RestClient(LinkServices.ApiGatewayForWeb));
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
