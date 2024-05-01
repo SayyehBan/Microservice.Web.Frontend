@@ -19,23 +19,23 @@ if (builder.Environment.IsDevelopment())
 }
 builder.Services.AddScoped<IProductService>(p =>
 {
-    return new RProductService(new RestClient(LinkServices.ProductService));
+    return new RProductService(new RestClient(LinkServices.ApiGatewayForWeb));
 });
 builder.Services.AddScoped<IBasketService>(p =>
 {
-    return new RBasketService(new RestClient(LinkServices.BasketService));
+    return new RBasketService(new RestClient(LinkServices.ApiGatewayForWeb));
 });
 
 builder.Services.AddScoped<IOrderService>(p =>
 {
     return new ROrderService(
-        new RestClient(LinkServices.OrderService));
+        new RestClient(LinkServices.ApiGatewayForWeb));
 }); 
 
 builder.Services.AddScoped<IPaymentService>(p =>
 {
     return new RPaymentService(
-        new RestClient(LinkServices.PaymentService));
+        new RestClient(LinkServices.ApiGatewayForWeb));
 }); 
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
