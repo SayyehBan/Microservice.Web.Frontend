@@ -14,7 +14,7 @@ public class RDiscountService : IDiscountService
     public RDiscountService(IConfiguration configuration)
     {
         this.configuration = configuration;
-        string discountServer = LinkServices.DiscountService;
+        string discountServer = LinkServices.ApiGatewayForWeb;
 
         channel = GrpcChannel.ForAddress(discountServer);
     }

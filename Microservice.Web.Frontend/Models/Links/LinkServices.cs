@@ -8,4 +8,5 @@ public static class LinkServices
     //public static string ProductService = "https://localhost:44304/";
     //public static string PaymentService = "https://localhost:44390/";
     public static string ApiGatewayForWeb= "https://localhost:7049/";
+    public static string FrontEndUser= "https://localhost:7102/";
 }
