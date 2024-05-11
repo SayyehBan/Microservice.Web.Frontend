@@ -2,10 +2,12 @@
 using Microservice.Web.Frontend.Services.BasketServices;
 using Microservice.Web.Frontend.Services.DiscountServices;
 using Microservice.Web.Frontend.Services.ProductServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Web.Frontend.Controllers;
 
+[Authorize]
 public class BasketController : Controller
 {
     private readonly IBasketService basketService;

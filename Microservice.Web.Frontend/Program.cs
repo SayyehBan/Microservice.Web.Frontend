@@ -4,6 +4,8 @@ using Microservice.Web.Frontend.Services.DiscountServices;
 using Microservice.Web.Frontend.Services.OrderServices;
 using Microservice.Web.Frontend.Services.PaymentServices;
 using Microservice.Web.Frontend.Services.ProductServices;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using RestSharp;
 using System.Net;
 
@@ -29,14 +31,31 @@ builder.Services.AddScoped<IBasketService>(p =>
 builder.Services.AddScoped<IOrderService>(p =>
 {
     return new ROrderService(
-        new RestClient(LinkServices.OrderServer));
-}); 
+        new RestClient(LinkServices.ApiGatewayForWeb));
+});
 
 builder.Services.AddScoped<IPaymentService>(p =>
 {
     return new RPaymentService(
         new RestClient(LinkServices.ApiGatewayForWeb));
-}); 
+});
+builder.Services.AddAuthentication(c =>
+{
+    c.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    c.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+
+}).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme).
+AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+     {
+         options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+         options.Authority = LinkServices.IdentityServer;
+         options.ClientId = "webfrontendcode";
+         options.ClientSecret = "123456";
+         options.ResponseType = "code";
+         options.GetClaimsFromUserInfoEndpoint = true;
+         //options.Scope.Add("profile");
+         //options.Scope.Add("openid");
+     });
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
 // اضافه کردن کد زیر به قسمت ابتدایی کد شما
@@ -60,7 +79,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
