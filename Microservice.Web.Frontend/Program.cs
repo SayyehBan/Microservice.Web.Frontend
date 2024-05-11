@@ -29,7 +29,7 @@ builder.Services.AddScoped<IBasketService>(p =>
 builder.Services.AddScoped<IOrderService>(p =>
 {
     return new ROrderService(
-        new RestClient(LinkServices.ApiGatewayForWeb));
+        new RestClient(LinkServices.OrderServer));
 }); 
 
 builder.Services.AddScoped<IPaymentService>(p =>
