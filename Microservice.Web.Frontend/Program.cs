@@ -19,10 +19,12 @@ if (builder.Environment.IsDevelopment())
 {
     mvcService.AddRazorRuntimeCompilation();
 }
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IProductService>(p =>
 {
     return new RProductService(new RestClient(LinkServices.ApiGatewayForWeb));
 });
+
 builder.Services.AddScoped<IBasketService>(p =>
 {
     return new RBasketService(new RestClient(LinkServices.ApiGatewayForWeb));
@@ -31,7 +33,7 @@ builder.Services.AddScoped<IBasketService>(p =>
 builder.Services.AddScoped<IOrderService>(p =>
 {
     return new ROrderService(
-        new RestClient(LinkServices.ApiGatewayForWeb));
+        new RestClient(LinkServices.ApiGatewayForWeb), new HttpContextAccessor());
 });
 
 builder.Services.AddScoped<IPaymentService>(p =>
@@ -53,8 +55,11 @@ AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
          options.ClientSecret = "123456";
          options.ResponseType = "code";
          options.GetClaimsFromUserInfoEndpoint = true;
-         //options.Scope.Add("profile");
-         //options.Scope.Add("openid");
+         options.SaveTokens = true;
+         options.Scope.Add("profile");
+         options.Scope.Add("openid");
+         options.Scope.Add("orderservice.fullaccess");
+         options.Scope.Add("basket.fullaccess");
      });
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 

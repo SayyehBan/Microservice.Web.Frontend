@@ -15,13 +15,13 @@ public class OrdersController : Controller
         this.orderService = orderService;
         this.paymentService = paymentService;
     }
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var orders = orderService.GetOrders(UserId);
+        var orders = await orderService.GetOrders(UserId);
         return View(orders);
     }
 
-    public IActionResult Detail(Guid Id)
+    public async Task<IActionResult> Detail(Guid Id)
     {
         var order = orderService.OrderDetail(Id);
         return View(order);
