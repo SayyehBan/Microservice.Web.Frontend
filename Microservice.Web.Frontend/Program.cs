@@ -48,19 +48,19 @@ builder.Services.AddAuthentication(c =>
 
 }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme).
 AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-     {
-         options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-         options.Authority = LinkServices.IdentityServer;
-         options.ClientId = "webfrontendcode";
-         options.ClientSecret = "123456";
-         options.ResponseType = "code";
-         options.GetClaimsFromUserInfoEndpoint = true;
-         options.SaveTokens = true;
-         options.Scope.Add("profile");
-         options.Scope.Add("openid");
-         options.Scope.Add("orderservice.fullaccess");
-         options.Scope.Add("basket.fullaccess");
-     });
+{
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.Authority = LinkServices.IdentityServer;
+    options.ClientId = "webfrontendcode";
+    options.ClientSecret = "123456";
+    options.ResponseType = "code";
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.SaveTokens = true;
+    options.Scope.Add("profile");
+    options.Scope.Add("openid");
+    options.Scope.Add("orderservice.getorders");
+    options.Scope.Add("basket.fullaccess");
+});
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
 // اضافه کردن کد زیر به قسمت ابتدایی کد شما

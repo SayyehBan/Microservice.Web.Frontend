@@ -1,9 +1,11 @@
 ﻿using Microservice.Web.Frontend.Services.OrderServices;
 using Microservice.Web.Frontend.Services.PaymentServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Web.Frontend.Controllers;
 
+[Authorize]
 public class OrdersController : Controller
 {
     private readonly IOrderService orderService;
