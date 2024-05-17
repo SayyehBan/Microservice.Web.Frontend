@@ -60,6 +60,7 @@ AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
     options.Scope.Add("openid");
     options.Scope.Add("orderservice.getorders");
     options.Scope.Add("basket.fullaccess");
+    options.Scope.Add("apigatewayforweb.fullaccess");
 });
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
