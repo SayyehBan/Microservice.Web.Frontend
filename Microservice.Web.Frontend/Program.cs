@@ -20,6 +20,14 @@ if (builder.Environment.IsDevelopment())
     mvcService.AddRazorRuntimeCompilation();
 }
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAccessTokenManagement();
+
+builder.Services.AddHttpClient<IOrderService,ROrderService>(p =>
+{
+    p.BaseAddress =new Uri(LinkServices.ApiGatewayForWeb);
+}).AddUserAccessTokenHandler();
+
+
 builder.Services.AddScoped<IProductService>(p =>
 {
     return new RProductService(new RestClient(LinkServices.ApiGatewayForWeb));
@@ -30,11 +38,6 @@ builder.Services.AddScoped<IBasketService>(p =>
     return new RBasketService(new RestClient(LinkServices.ApiGatewayForWeb));
 });
 
-builder.Services.AddScoped<IOrderService>(p =>
-{
-    return new ROrderService(
-        new RestClient(LinkServices.ApiGatewayForWeb), new HttpContextAccessor());
-});
 
 builder.Services.AddScoped<IPaymentService>(p =>
 {
@@ -61,6 +64,8 @@ AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
     options.Scope.Add("orderservice.getorders");
     options.Scope.Add("basket.fullaccess");
     options.Scope.Add("apigatewayforweb.fullaccess");
+    options.Scope.Add("offline_access");
+    
 });
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 

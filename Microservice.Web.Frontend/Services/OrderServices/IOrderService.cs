@@ -5,24 +5,23 @@ using Microsoft.AspNetCore.Authentication;
 using Newtonsoft.Json;
 using NuGet.Common;
 using RestSharp;
+using System.Text;
 
 namespace Microservice.Web.Frontend.Services.OrderServices;
 public interface IOrderService
 {
     Task<List<OrderDto>> GetOrders(string UserId);
-    OrderDetailDto OrderDetail(Guid OrderId);
-    ResultDto RequestPayment(Guid OrderId);
+    Task<OrderDetailDto> OrderDetail(Guid OrderId);
+    Task<ResultDto> RequestPayment(Guid OrderId);
 }
 
 public class ROrderService : IOrderService
 {
-    private readonly RestClient restClient;
-    private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly HttpClient httpClint;
     private string _accessToken = null;
-    public ROrderService(RestClient restClient, IHttpContextAccessor httpContextAccessor)
+    public ROrderService(HttpClient httpClint)
     {
-        this.restClient = restClient;
-        this.httpContextAccessor = httpContextAccessor;
+        this.httpClint = httpClint;
     }
     private async Task<string> GetAccsessToken()
     {
@@ -51,58 +50,96 @@ public class ROrderService : IOrderService
         }
     }
 
-    public async Task <List<OrderDto>> GetOrders(string UserId)
+    public async Task<List<OrderDto>> GetOrders(string UserId)
     {
-        var request = new RestRequest("/api/Order", Method.Get);
-        //var token = GetAccsessToken().Result;
-        var accsessToken = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
-        //request.AddHeader("Authorization", $"Bearer {token}");
-        request.AddHeader("Authorization", $"Bearer {accsessToken}");
-        var response = restClient.Execute(request);
-        var orders = JsonConvert.DeserializeObject<List<OrderDto>>(response.Content);
+        var response = await httpClint.GetAsync(string.Format("/api/Order"));
+        var json = await response.Content.ReadAsStringAsync();
+
+        var orders = JsonConvert.DeserializeObject<List<OrderDto>>(json);
         return orders;
     }
 
-    public OrderDetailDto OrderDetail(Guid OrderId)
+    public async Task<OrderDetailDto> OrderDetail(Guid OrderId)
     {
-        var request = new RestRequest($"/api/Order/{OrderId}", Method.Get);
-        //var token = GetAccsessToken().Result;
-        var accsessToken = httpContextAccessor.HttpContext.GetTokenAsync("access_token").Result;
-        //request.AddHeader("Authorization", $"Bearer {token}");
-        request.AddHeader("Authorization", $"Bearer {accsessToken}");
-        var response = restClient.Execute(request);
-        var orderdetail = JsonConvert.DeserializeObject<OrderDetailDto>(response.Content);
+
+        var response = await httpClint.GetAsync(string.Format("/api/Order/{0}", OrderId));
+        var json = await response.Content.ReadAsStringAsync();
+        var orderdetail = JsonConvert.DeserializeObject<OrderDetailDto>(json);
         return orderdetail;
-    }
 
-    public ResultDto RequestPayment(Guid OrderId)
-    {
-        var request = new RestRequest($"/api/OrderPayment?OrderId={OrderId}", Method.Post);
-        //var token = GetAccsessToken().Result;
-        var accsessToken = httpContextAccessor.HttpContext.GetTokenAsync("access_token").Result;
-        //request.AddHeader("Authorization", $"Bearer {token}");
-        request.AddHeader("Authorization", $"Bearer {accsessToken}");
-        request.AddHeader("Content-Type", "application/json");
-        var response = restClient.Execute(request);
-        return GetResponseStatusCode(response);
-    }
+        //var response =  httpClint.GetAsync(string.Format("/api/Order"));
+        ////var request = new RestRequest($"/api/Order/{OrderId}", Method.Get);
 
-    private static ResultDto GetResponseStatusCode(RestResponse response)
+        ////var response = httpClint.Execute(request);
+        //var orderdetail = JsonConvert.DeserializeObject<OrderDetailDto>(response.Content);
+        //return orderdetail;
+    }
+    public async Task<ResultDto> RequestPayment(Guid OrderId)
     {
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        var url = $"/api/OrderPayment?OrderId={OrderId}";
+        var content = new StringContent("{}", Encoding.UTF8, "application/json"); // Empty JSON body
+
+        using (var httpClient = new HttpClient())
         {
-            return new ResultDto
-            {
-                IsSuccess = true,
-            };
-        }
-        else
-        {
-            return new ResultDto
-            {
-                IsSuccess = false,
-                Message = response.ErrorMessage
-            };
+            httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
+            var response = await httpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode(); // Throw exception for non-success status codes
+            var responseString = await response.Content.ReadAsStringAsync();
+            return GetResponseStatusCode(responseString); // Assuming GetResponseStatusCode parses JSON for status code
         }
     }
+
+    //public ResultDto RequestPayment(Guid OrderId)
+    //{
+    //    var request = new RestRequest($"/api/OrderPayment?OrderId={OrderId}", Method.Post);
+
+    //    request.AddHeader("Content-Type", "application/json");
+    //    var response = httpClint.Execute(request);
+    //    return GetResponseStatusCode(response);
+    //}
+    private static ResultDto GetResponseStatusCode(string responseString)
+    {
+        // Assuming responseString is a valid JSON string
+        try
+        {
+            var responseObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseString);
+            if (responseObject.ContainsKey("IsSuccess") && (bool)responseObject["IsSuccess"])
+            {
+                return new ResultDto { IsSuccess = true };
+            }
+            else if (responseObject.ContainsKey("Message"))
+            {
+                return new ResultDto { IsSuccess = false, Message = (string)responseObject["Message"] };
+            }
+            else
+            {
+                // Handle unexpected response format
+                return new ResultDto { IsSuccess = false, Message = "Unexpected response format" };
+            }
+        }
+        catch (JsonException)
+        {
+            // Handle invalid JSON format
+            return new ResultDto { IsSuccess = false, Message = "Invalid response format" };
+        }
+    }
+
+    //private static ResultDto GetResponseStatusCode(RestResponse response)
+    //{
+    //    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+    //    {
+    //        return new ResultDto
+    //        {
+    //            IsSuccess = true,
+    //        };
+    //    }
+    //    else
+    //    {
+    //        return new ResultDto
+    //        {
+    //            IsSuccess = false,
+    //            Message = response.ErrorMessage
+    //        };
+    //    }
+    //}
 }

@@ -28,9 +28,10 @@ public class OrdersController : Controller
         var order = orderService.OrderDetail(Id);
         return View(order);
     }
-    public IActionResult Pay(Guid OrderId)
+    public async Task<IActionResult> Pay(Guid OrderId)
     {
-        var order = orderService.OrderDetail(OrderId);
+        var order =await  orderService.OrderDetail(OrderId);
+
         if (order.PaymentStatus == PaymentStatus.isPaid)
         {
             return RedirectToAction(nameof(Detail), new { Id = OrderId });
